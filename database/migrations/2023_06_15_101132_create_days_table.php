@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('days', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('as_word');
+            $table->unsignedSmallInteger('days_since_match_start');
         });
     }
 

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('test_match_days', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedSmallInteger('match_id');
+            $table->unsignedSmallInteger('day_id');
         });
     }
 

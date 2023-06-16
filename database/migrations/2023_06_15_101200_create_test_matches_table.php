@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('test_matches', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedSmallInteger('match_number');
+            $table->unsignedSmallInteger('match_number_as_word');
+            $table->date('start_date');
         });
     }
 
