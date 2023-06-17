@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TestMatch extends Model
 {
+    public $timestamps = false;
+
     use HasFactory;
 }

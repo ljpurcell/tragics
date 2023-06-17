@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedSmallInteger('match_day_id');
             $table->unsignedSmallInteger('user_id');
-            $table->mediumInteger('total_score');
-            $table->json('rule_points_array');
+            $table->json('rules_array');
         });
     }
 

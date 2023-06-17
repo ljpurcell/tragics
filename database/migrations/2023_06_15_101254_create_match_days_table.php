@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_match_days', function (Blueprint $table) {
+        Schema::create('match_days', function (Blueprint $table) {
             $table->id();
-            $table->unsignedSmallInteger('match_id');
-            $table->unsignedSmallInteger('day_id');
+            $table->unsignedSmallInteger('match_number');
+            $table->unsignedSmallInteger('day_number');
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_match_days');
+        Schema::dropIfExists('match_days');
     }
 };

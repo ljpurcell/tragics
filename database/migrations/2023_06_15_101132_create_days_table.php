@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('days', function (Blueprint $table) {
             $table->id();
+            $table->unsignedSmallInteger('day_number');
             $table->string('as_word');
             $table->unsignedSmallInteger('days_since_match_start');
         });
