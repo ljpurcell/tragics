@@ -5,17 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Rule;
 use App\Models\User;
 use App\Models\UserMatchDay;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ApiPointsController extends Controller
+class ApiUserMatchDayContoller extends Controller
 {
+    public $availableRelations = [
+        'user',
+        'matchDays'
+    ];
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $data = User::with('matchDays')->get();
+
+
+        return $data;
     }
 
     /**
@@ -39,7 +45,9 @@ class ApiPointsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $userMatchDay = UserMatchDay::find($id);
+
+        dd($userMatchDay);
     }
 
     /**
@@ -53,15 +61,19 @@ class ApiPointsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function __invoke(Request $request, string $userMatchDayId)
+    public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
             'points_array' => ['json', 'required']
         ]);
 
+        if ($validatedData->fails()) {
+            // return error
+        }
+
         $pointsArray = json_decode($validatedData['points_array']);
 
-        $userMatchDay = UserMatchDay::find($userMatchDayId);
+        $userMatchDay = UserMatchDay::find($id);
         $user = User::find($userMatchDay->user_id);
 
         if ($userMatchDay && $user) {
