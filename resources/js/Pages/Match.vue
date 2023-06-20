@@ -39,7 +39,7 @@ stuff goes here
         methods: {
 
             getData() {
-                axios.get('/api/matches/' + this.id).then(response => {
+                axios.get('/api/points/' + this.id).then(response => {
                     this.data = response.data;
                 })
             }

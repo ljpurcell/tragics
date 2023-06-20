@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MatchDay;
 use App\Models\Rule;
+use App\Models\TestMatch;
 use App\Models\User;
 use App\Models\UserMatchDay;
 use Illuminate\Http\Request;
@@ -44,9 +46,13 @@ class ApiUserMatchDayController extends Controller
      */
     public function show(string $id)
     {
-        $userMatchDay = UserMatchDay::find($id);
+        // get match_day IDs for this match_number
+        $testMatchIds = MatchDay::where('match_number', $id)->get()->pluck('id')->toArray();
 
-        dd($userMatchDay);
+        // get user_match_day with match_day_id in the above
+        $data = UserMatchDay::whereIn('match_day_id', $testMatchIds)->with('user')->get();
+
+        return $data->groupBy('user.name');
     }
 
     /**
