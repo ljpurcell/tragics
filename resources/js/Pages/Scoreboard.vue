@@ -1,20 +1,19 @@
 <template>
-    <Head title="Dashboard" />
+    <Head title="Scoreboard" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Scoreboard</h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
 
-                    <button @click="getData()">
-                        Click here
-                    </button>
-                    <pre>{{userTotalScores}}</pre>
-                    <pre>{{data}}</pre>
+                    <div v-for="userScore in userTotalScores" class="border-b border-gray-100 border-1 flex w-full justify-between text-lg py-6 px-8">
+                        <div>{{userScore.user}}</div>
+                        <div>{{userScore.score}}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,6 +32,9 @@
                 data: '',
                 userTotalScores: [],
             }
+        },
+        beforeMount() {
+            this.getData();
         },
 
         methods: {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\TestMatch;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,9 +26,15 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/scoreboard', function () {
+    return Inertia::render('Scoreboard');
+})->middleware(['auth', 'verified'])->name('scoreboard');
+
+Route::get('/match/{id}', function ($matchId) {
+    $match = TestMatch::findOrFail($matchId);
+    return Inertia::render('Match', ['id' => $match->id]);
+})->middleware(['auth', 'verified'])->name('match');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

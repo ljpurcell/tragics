@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\UserMatchDay;
 use Illuminate\Http\Request;
 
-class ApiUserMatchDayContoller extends Controller
+class ApiUserMatchDayController extends Controller
 {
     public $availableRelations = [
         'user',
@@ -19,7 +19,6 @@ class ApiUserMatchDayContoller extends Controller
     public function index()
     {
         $data = User::with('matchDays')->get();
-
 
         return $data;
     }
