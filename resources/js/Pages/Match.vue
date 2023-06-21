@@ -9,10 +9,14 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-stuff goes here
-                    <pre>
-                        {{ data }}
-                    </pre>
+                    <div v-for="user in Object.keys(data)" class="border-b border-gray-100 border-1 flex w-full justify-between text-lg py-6 px-8">
+                        {{user}}
+                        <div class="flex w-full justify-between">
+                            <div v-for="day in data[user]">
+                            {{ day.total_score }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -26,9 +30,12 @@ stuff goes here
 <script>
     export default {
 
+        props: {
+            id: String
+        },
+
         data() {
             return {
-                id: 1,
                 data: '',
             }
         },
