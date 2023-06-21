@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\ApiRulesController;
 use App\Http\Controllers\ApiUserMatchDayController;
-use App\Http\Controllers\ApiTestMatchesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,4 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('/points', ApiUserMatchDayController::class);
-Route::resource('/matches', ApiTestMatchesController::class);
+Route::resource('/rules', ApiRulesController::class);

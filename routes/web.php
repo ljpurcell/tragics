@@ -30,6 +30,10 @@ Route::get('/scoreboard', function () {
     return Inertia::render('Scoreboard');
 })->middleware(['auth', 'verified'])->name('scoreboard');
 
+Route::get('/rules', function () {
+    return Inertia::render('Rules');
+})->middleware(['auth', 'verified'])->name('rules');
+
 Route::get('/match/{id}', function ($matchId) {
     $match = TestMatch::findOrFail($matchId);
     return Inertia::render('Match', ['id' => $match->id]);
