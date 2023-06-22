@@ -12,7 +12,25 @@ class ApiRulesController extends Controller
      */
     public function index()
     {
-        return Rule::all();
+        try {
+            $data = Rule::all();
+
+            if ($data) {
+                $status = 'OK';
+                $responseCode = 200;
+                $message = 'Success';
+            } else {
+                $status = 'Not found';
+                $responseCode = 404;
+                $message = 'Could not locate the resource';
+            }
+        } catch (\Exception $exception) {
+            $status = 'Internal server error';
+            $responseCode = 500;
+            $message = $exception->getMessage();
+        }
+
+        return response()->json(['status' => $status, 'response code' => $responseCode, 'message' => $message, 'data' => $data]);
     }
 
     /**

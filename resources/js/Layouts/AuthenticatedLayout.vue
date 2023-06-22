@@ -141,9 +141,9 @@ const showingNavigationDropdown = ref(false);
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between">
                     <slot name="header" />
                     <div class="flex space-x-4">
-                        <div v-for="i in [1, 2, 3]">
-                            <a :href="'/match/' + i">
-                                Match {{i}}
+                        <div v-for="match in data">
+                            <a :href="'/match/' + match.match_number">
+                                Match {{match.match_number}}
                             </a>
                         </div>
                         <a href="/rules" class="font-medium">
@@ -160,3 +160,31 @@ const showingNavigationDropdown = ref(false);
         </div>
     </div>
 </template>
+
+<script>
+    export default {
+
+        props: {
+
+        },
+
+        data() {
+            return {
+                data: '',
+            }
+        },
+        beforeMount() {
+            this.getData();
+        },
+
+        methods: {
+
+            getData() {
+                axios.get('/api/matches/').then(response => {
+                    this.data = response.data.data;
+                })
+            }
+        }
+
+    }
+</script>

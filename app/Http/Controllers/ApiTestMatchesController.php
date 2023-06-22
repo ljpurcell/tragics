@@ -2,23 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MatchDay;
-use App\Models\User;
+use App\Models\TestMatch;
 use Illuminate\Http\Request;
 
 class ApiTestMatchesController extends Controller
 {
-    public $availableRelations = [
-        'user',
-        'matchDays'
-    ];
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        try {
+            $data = TestMatch::all();
+
+            if ($data) {
+                $status = 'OK';
+                $responseCode = 200;
+                $message = 'Success';
+            } else {
+                $status = 'Not found';
+                $responseCode = 404;
+                $message = 'Could not locate the resource';
+            }
+        } catch (\Exception $exception) {
+            $status = 'Internal server error';
+            $responseCode = 500;
+            $message = $exception->getMessage();
+        }
+
+        return response()->json(['status' => $status, 'response code' => $responseCode, 'message' => $message, 'data' => $data]);
     }
 
     /**
@@ -42,11 +54,7 @@ class ApiTestMatchesController extends Controller
      */
     public function show(string $id)
     {
-        $matchDayIds = MatchDay::where('match_number', $id)->get()->pluck('id')->toArray();
-
-        $userMatchDaysForTest = User::with('matchDays')->whereIn('user_match_days.match_day_id', $matchDayIds)->get();
-
-        return $userMatchDaysForTest;
+        //
     }
 
     /**
