@@ -47,10 +47,9 @@ class ApiUserMatchDayController extends Controller
     public function show(string $id)
     {
         try {
-            // get match_day IDs for this match_number
+
             $testMatchIds = MatchDay::where('match_number', $id)->get()->pluck('id')->toArray();
 
-            // get user_match_day with match_day_id in the above
             $userMatchDays = UserMatchDay::whereIn('match_day_id', $testMatchIds)->with('user')->get();
 
             $data = $userMatchDays->groupBy('user.name');
@@ -99,14 +98,17 @@ class ApiUserMatchDayController extends Controller
 
             if ($userMatchDay && $user) {
 
+                $totalScore = 0;
+
                 foreach ($pointsArrayObject as $pointScore) {
                     $rule = Rule::where('name', $pointScore->rule)->firstOrFail();
 
                     if ($rule) {
-                        $userMatchDay->total_score += $rule->points;
+                        $totalScore += $rule->points;
                     }
                 }
 
+                $userMatchDay->total_score = $totalScore;
                 $userMatchDay->rule_points_array = json_encode($request->points_array);
                 $userMatchDay->save();
 

@@ -48,8 +48,8 @@
 
                         let sum = 0;
 
-                        pointsData[userId].match_days.forEach(matchDay => {
-                            sum += matchDay.total_score
+                        pointsData[userId].match_days.forEach(matchday => {
+                            sum += matchday.total_score
                         })
 
                         this.userTotalScores.push({user: pointsData[userId].name, score: sum});
