@@ -46,13 +46,31 @@ class ApiUserMatchDayController extends Controller
      */
     public function show(string $id)
     {
-        // get match_day IDs for this match_number
-        $testMatchIds = MatchDay::where('match_number', $id)->get()->pluck('id')->toArray();
+        try {
+            // get match_day IDs for this match_number
+            $testMatchIds = MatchDay::where('match_number', $id)->get()->pluck('id')->toArray();
 
-        // get user_match_day with match_day_id in the above
-        $data = UserMatchDay::whereIn('match_day_id', $testMatchIds)->with('user')->get();
+            // get user_match_day with match_day_id in the above
+            $userMatchDays = UserMatchDay::whereIn('match_day_id', $testMatchIds)->with('user')->get();
 
-        return $data->groupBy('user.name');
+            $data = $userMatchDays->groupBy('user.name');
+
+            if ($data) {
+                $status = 'OK';
+                $responseCode = 200;
+                $message = 'Success';
+            } else {
+                $status = 'Not found';
+                $responseCode = 404;
+                $message = 'Could not locate the resource';
+            }
+        } catch (\Exception $exception) {
+            $status = 'Internal server error';
+            $responseCode = 500;
+            $message = $exception->getMessage();
+        }
+
+        return response()->json(['status' => $status, 'response code' => $responseCode, 'message' => $message, 'data' => $data]);
     }
 
     /**

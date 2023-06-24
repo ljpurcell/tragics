@@ -36,7 +36,7 @@ Route::get('/rules', function () {
 
 Route::get('/match/{id}', function ($matchId) {
     $match = TestMatch::findOrFail($matchId);
-    return Inertia::render('Match', ['id' => $match->id]);
+    return Inertia::render('Match', ['matchId' => $match->id]);
 })->middleware(['auth', 'verified'])->name('match');
 
 

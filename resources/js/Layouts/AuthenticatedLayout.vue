@@ -141,8 +141,8 @@ const showingNavigationDropdown = ref(false);
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between">
                     <slot name="header" />
                     <div class="flex space-x-4">
-                        <div v-for="match in data">
-                            <a :href="'/match/' + match.match_number">
+                        <div class="mr-4">
+                            <a v-for="match in data" :href="'/match/' + match.match_number" class="px-2">
                                 Match {{match.match_number}}
                             </a>
                         </div>

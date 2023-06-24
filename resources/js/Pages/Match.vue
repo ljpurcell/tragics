@@ -1,5 +1,5 @@
 <template>
-    <Head :title="'Match ' + id" />
+    <Head :title="'Match ' + matchId" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -9,14 +9,48 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div v-for="user in Object.keys(data)" class="border-b border-gray-100 border-1 flex w-full justify-between text-lg py-6 px-8">
-                        {{user}}
+                    <div v-for="user in Object.keys(userDays)" class="border-b border-gray-100 border-1 w-full text-lg py-6 px-8">
+                        <div>
+                            {{user}} - Total: {{ 0 }}
+                        </div>
                         <div class="flex w-full justify-between">
-                            <div v-for="day in data[user]">
-                            {{ day.total_score }}
+                            <div v-for="userDay in userDays[user]" class="">
+                                <input type="text" size="1" :value="userDay.total_score" disabled="true" class="rounded-lg bg-gray-100">
+                                <button @click="showModalForUserDay(userDay)" class="bg-green-200 p-2 rounded-lg text-sm ml-2">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
+                    <!-- Apply score rule modal -->
+                    <Modal :show="showModal">
+                        <div class="flex justify-between m-4">
+                            <div>
+                                {{ userDayInFocus.user.name }} - Match {{ matchId }}, Day {{ userDayInFocus.match_day_id }}
+                            </div>
+                            <button @click="showModal = false">
+                                Exit <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <div v-if="pointsArrayInFocus.length">
+                                This user has already scored points on this day for:
+                                <ul v-for="score in pointsArrayInFocus">
+                                    <li>score</li>
+                                </ul>
+                            </div>
+                            <div v-else>
+                                No scores for this day yet...
+                            </div>
+                            <select>
+                                <option v-for="rule in rules" :value="rule.name">{{rule.name}}</option>
+                            </select>
+                            <button @click="">
+                                Save
+                            </button>
+                            <pre>
+                                {{ userDayInFocus }}
+                            </pre>
+                        </div>
+                    </Modal>
                 </div>
             </div>
         </div>
@@ -25,31 +59,56 @@
 
 <script setup>
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import Modal from '@/Components/Modal.vue';
     import { Head } from '@inertiajs/vue3';
 </script>
 <script>
     export default {
 
         props: {
-            id: String
+            matchId: Number
         },
 
         data() {
             return {
                 data: '',
+                showModal: false,
+                userDays: '',
+                userDayInFocus: '',
+                pointsArrayInFocus: [],
+                rules: '',
             }
         },
         beforeMount() {
-            this.getData();
+            this.getUserDayData();
+            this.getRulesData();
         },
 
         methods: {
 
-            getData() {
-                axios.get('/api/points/' + this.id).then(response => {
-                    this.data = response.data;
+            getUserDayData() {
+                axios.get('/api/points/' + this.matchId).then(response => {
+                    this.userDays = response.data.data;
                 })
-            }
+            },
+
+            getRulesData() {
+                axios.get('/api/rules').then(response => {
+                    this.rules = response.data.data;
+                })
+            },
+
+            showModalForUserDay(userDay) {
+                this.showModal = true;
+                this.userDayInFocus = userDay;
+                this.pointsArrayInFocus = JSON.parse(userDay.rule_points_array);
+            },
+
+            closeModal() {
+                this.showModal = false;
+                this.userDayInFocus = '';
+                this.pointsArrayInFocus = [];
+            },
         }
     }
 
