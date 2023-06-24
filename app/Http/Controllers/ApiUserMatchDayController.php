@@ -90,36 +90,41 @@ class ApiUserMatchDayController extends Controller
             'points_array' => ['json', 'required']
         ]);
 
-        if ($validatedData->fails()) {
-            // return error
-        }
+        try {
 
-        $pointsArray = json_decode($validatedData['points_array']);
+            $pointsArrayObject = json_decode($validatedData['points_array']);
 
-        $userMatchDay = UserMatchDay::find($id);
-        $user = User::find($userMatchDay->user_id);
+            $userMatchDay = UserMatchDay::find($id);
+            $user = User::find($userMatchDay->user_id);
 
-        if ($userMatchDay && $user) {
+            if ($userMatchDay && $user) {
 
-            $rulesNotFound = [];
+                foreach ($pointsArrayObject as $pointScore) {
+                    $rule = Rule::where('name', $pointScore->rule)->firstOrFail();
 
-            foreach ($pointsArray as $point) {
-                $rule = Rule::find($point);
-
-                if ($rule) {
-                    $userMatchDay->total_score += $rule->points;
-                } else {
-                    $rulesNotFound[] = $rule;
+                    if ($rule) {
+                        $userMatchDay->total_score += $rule->points;
+                    }
                 }
-            }
 
-            if ($rulesNotFound) {
-                // output error about invalid ruleThe controller class `App\Http\Controllers\ApiPointsController` is not invokable. Did you forget to add the `__invoke` method or is the controller's method missing in your routes file?
-            }
-        } else {
+                $userMatchDay->rule_points_array = json_encode($request->points_array);
+                $userMatchDay->save();
 
-            // return an error message
+                $status = 'OK';
+                $responseCode = 200;
+                $message = 'Success';
+            } else {
+                $status = 'Not found';
+                $responseCode = 404;
+                $message = 'Could not locate the resource';
+            }
+        } catch (\Exception $exception) {
+            $status = 'Internal server error';
+            $responseCode = 500;
+            $message = $exception->getMessage();
         }
+
+        return response()->json(['status' => $status, 'response code' => $responseCode, 'message' => $message, 'data' => $validatedData]);
     }
 
     /**

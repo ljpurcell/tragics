@@ -24,13 +24,15 @@
                     </div>
                     <!-- Apply score rule modal -->
                     <Modal :show="showModal">
-                        <div class="flex justify-between m-4">
-                            <div>
-                                {{ userDayInFocus.user.name }} - Match {{ matchId }}, Day {{ userDayInFocus.match_day_id }}
+                        <div class="m-4">
+                            <div class="flex justify-between">
+                                <div>
+                                    {{ userDayInFocus.user.name }} - Match {{ matchId }}, Day {{ userDayInFocus.match_day_id }}
+                                </div>
+                                <button @click="closeModal()">
+                                    Exit <i class="fa-solid fa-xmark"></i>
+                                </button>
                             </div>
-                            <button @click="showModal = false">
-                                Exit <i class="fa-solid fa-xmark"></i>
-                            </button>
                             <div v-if="pointsArrayInFocus.length">
                                 This user has already scored points on this day for:
                                 <ul v-for="score in pointsArrayInFocus">
@@ -40,15 +42,19 @@
                             <div v-else>
                                 No scores for this day yet...
                             </div>
-                            <select>
-                                <option v-for="rule in rules" :value="rule.name">{{rule.name}}</option>
-                            </select>
-                            <button @click="">
+                            <div class="p-2">
+                                <label for="ruleSelection">Rule:</label>
+                                <select id="ruleSelection" v-model="selectedRule" class="m-2 rounded-lg">
+                                    <option v-for="rule in rules" :value="rule">{{rule.name}}</option>
+                                </select>
+                            </div>
+                            <div class="p-2">
+                                <label for="playerNomination">Player:</label>
+                                <input id="playerNomination" type="text" v-model="nominatedPlayer" class="m-2 rounded-lg">
+                            </div>
+                            <button @click="saveNewPointScore()">
                                 Save
                             </button>
-                            <pre>
-                                {{ userDayInFocus }}
-                            </pre>
                         </div>
                     </Modal>
                 </div>
@@ -71,12 +77,13 @@
 
         data() {
             return {
-                data: '',
                 showModal: false,
                 userDays: '',
                 userDayInFocus: '',
                 pointsArrayInFocus: [],
                 rules: '',
+                selectedRule: '',
+                nominatedPlayer: '',
             }
         },
         beforeMount() {
@@ -108,6 +115,32 @@
                 this.showModal = false;
                 this.userDayInFocus = '';
                 this.pointsArrayInFocus = [];
+                this.selectedRule = '';
+                this.nominatedPlayer = '';
+            },
+
+            saveNewPointScore() {
+
+                if (this.selectedRule && this.nominatedPlayer) {
+
+                    let newPointsArray = this.pointsArrayInFocus;
+
+                    newPointsArray.push({'rule': this.selectedRule.name, 'player': this.nominatedPlayer});
+
+                    const pointsArray = JSON.stringify(newPointsArray);
+
+                    axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray}).then(response => {
+
+                        if (response.data.status == 'OK') {
+                            this.getUserDayData();
+                            this.closeModal();
+                        }
+                    });
+                }
+            },
+
+            removePointScore() {
+
             },
         }
     }
