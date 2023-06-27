@@ -16,8 +16,8 @@
                         <div class="flex w-full justify-between">
                             <div v-for="userDay in userDays[user]" class="">
                                 <input type="text" size="2" :value="userDay.total_score" disabled="true" class="rounded-lg bg-gray-100">
-                                <button @click="showModalForUserDay(userDay)" class="bg-green-200 p-2 rounded-lg text-sm ml-2">
-                                    <i class="fa-solid fa-plus"></i>
+                                <button @click="showModalForUserDay(userDay)" class="text-gray-300 hover:bg-black hover:text-white px-2 py-1 rounded-lg text-sm ml-2">
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                             </div>
                         </div>
@@ -34,9 +34,13 @@
                                 </button>
                             </div>
                             <div v-if="pointsArrayInFocus.length">
-                                This user has already scored points on this day for:
-                                <ul v-for="score in pointsArrayInFocus" class="m-4">
-                                    <li><span class="font-semibold">{{score.rule}}</span> - <span class="capitalize">{{score.player}}</span></li>
+                                {{ userDayInFocus.user.name }} has already scored points on this day for:
+                                <ul v-for="(score, index) in pointsArrayInFocus" class="m-4">
+                                    <li><span class="font-semibold">{{score.rule}}</span> - <span class="capitalize">{{score.player}}</span>
+                                        <button @click="removePointScore(index)" class="text-red-300 text-xs hover:text-red-400 p-1 mx-2">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
                             <div v-else>
@@ -46,16 +50,18 @@
                                 <div class="p-2">
                                     <label for="ruleSelection">Rule:</label>
                                     <select id="ruleSelection" v-model="selectedRule" class="m-2 rounded-lg">
-                                        <option v-for="rule in rules" :value="rule">{{rule.name}}</option>
+                                        <option value="" selected disabled></option>
+                                        <option v-for="rule in rules" :value="rule.name">{{rule.name}}</option>
                                     </select>
                                 </div>
                                 <div class="p-2">
                                     <label for="playerNomination">Player:</label>
                                     <input id="playerNomination" type="text" v-model="nominatedPlayer" class="m-2 rounded-lg">
+                                    <div class="flex justify-end text-xs pr-2 text-gray-500" :class="{ 'opacity-0' : !selectedRule || nominatedPlayer }">Please nominate the player as well</div>
                                 </div>
                             </div>
                             <div class="flex flex-col items-center mt-4">
-                                <button @click="saveNewPointScore()" class="text-lg p-4 rounded-md bg-green-500 hover:bg-green-400 text-white">
+                                <button @click="addNewPointScore()" class="text-lg p-4 rounded-md bg-green-500 hover:bg-green-400 text-white">
                                     Save
                                 </button>
                             </div>
@@ -132,35 +138,51 @@
                 }
             },
 
-            closeModal() {
-                this.showModal = false;
-                this.userDayInFocus = '';
-                this.pointsArrayInFocus = [];
+            clearAttributesInFocus() {
                 this.selectedRule = '';
                 this.nominatedPlayer = '';
             },
 
-            saveNewPointScore() {
+            closeModal() {
+                this.userDayInFocus = '';
+                this.pointsArrayInFocus = [];
+                this.showModal = false;
+                this.clearAttributesInFocus();
+            },
+
+            addNewPointScore() {
 
                 if (this.selectedRule && this.nominatedPlayer) {
 
-                    this.pointsArrayInFocus.push({'rule': this.selectedRule.name, 'player': this.nominatedPlayer});
+                    this.pointsArrayInFocus.push({'rule': this.selectedRule, 'player': this.nominatedPlayer});
 
-                    const pointsArray = JSON.stringify(this.pointsArrayInFocus);
-
-                    axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray}).then(response => {
-
-                        if (response.statusText == 'OK') {
-                            this.closeModal();
-                            this.getUserDayData();
-                        }
-                    });
+                    this.savePointsArray();
                 }
             },
 
-            removePointScore() {
+            removePointScore(index) {
 
+                Swal.fire({
+                    text: 'here i am'
+                });
+
+                this.pointsArrayInFocus.splice(index, 1);
+
+                this.savePointsArray();
             },
+
+            savePointsArray() {
+
+                const pointsArray = JSON.stringify(this.pointsArrayInFocus);
+
+                axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray}).then(response => {
+
+                    if (response.statusText == 'OK') {
+                        this.getUserDayData();
+                        this.clearAttributesInFocus();
+                    }
+                });
+            }
         }
     }
 
