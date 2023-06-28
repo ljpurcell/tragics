@@ -49,10 +49,9 @@ defineProps({
         </div>
 
         <div class="max-w-7xl mx-auto p-6 lg:p-8">
-            <div class="flex justify-center">
+            <div class="flex justify-center text-xl text-white">
                 <i class="fa-solid fa-baseball-bat-ball"></i>
             </div>
-            <div>** TEST **</div>
 
             <div class="mt-16">
                 <div class="text-white text-2xl font-semibold">
