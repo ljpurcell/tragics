@@ -162,7 +162,7 @@
 
             removePointScore(index) {
 
-                Swal.fire({
+                swal.fire({
                     text: 'here i am'
                 });
 
