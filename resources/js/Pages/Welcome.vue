@@ -41,7 +41,6 @@ defineProps({
                 >
 
                 <Link
-                    v-if="canRegister"
                     :href="route('register')"
                     class="mx-1 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
                     >Register</Link
@@ -53,6 +52,7 @@ defineProps({
             <div class="flex justify-center">
                 <i class="fa-solid fa-baseball-bat-ball"></i>
             </div>
+            <div>** TEST **</div>
 
             <div class="mt-16">
                 <div class="text-white text-2xl font-semibold">
