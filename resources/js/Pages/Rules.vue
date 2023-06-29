@@ -82,7 +82,7 @@
         methods: {
 
             getData() {
-                axios.get('/api/rules').then(response => {
+                axios.get('/api/rules/').then(response => {
                     this.data = response.data.data;
                 })
             },
