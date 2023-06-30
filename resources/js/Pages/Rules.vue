@@ -8,7 +8,7 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div v-for="(rule, index) in data" class="border-b border-gray-100 border-1 w-full text-lg py-6 px-8">
+                    <div v-for="(rule, index) in rules" class="border-b border-gray-100 border-1 w-full text-lg py-6 px-8">
                         <div class="w-full flex justify-between">
                            <div class="capitalize font-semibold mb-1">
                                 {{ index + 1}}. {{ rule.name }}
@@ -68,23 +68,28 @@
 
         },
 
-        data() {
+        rules() {
             return {
-                data: '',
+                rules: '',
                 ruleBeingEdited: '',
                 showModal: false,
             }
         },
         beforeMount() {
-            this.getData();
+            this.getRules();
         },
 
         methods: {
 
-            getData() {
-                axios.get('/api/rules/').then(response => {
-                    this.data = response.data.data;
-                })
+            async getRules() {
+
+                try {
+                    let response = await axios.get('/rules');
+                    this.rules = response.data.data;
+                }
+                catch (error) {
+                    console.log(eror);
+                }
             },
 
             deleteRule(rule) {

@@ -29,22 +29,25 @@
 
         data() {
             return {
-                data: '',
+                pointsData: '',
                 userTotalScores: [],
             }
         },
+
         beforeMount() {
-            this.getData();
+            this.getMatchDayPoints();
         },
 
         methods: {
 
-            getData() {
-                axios.get('/api/points').then(response => {
-                    const pointsData = response.data;
-                    this.data = response.data;
+            async getMatchDayPoints() {
 
-                    for (const userId in pointsData) {
+                try {
+
+                    const response = await axios.get('/api/points');
+                    this.pointsData = response.data;
+
+                    for (const userId in this.pointsData) {
 
                         let sum = 0;
 
@@ -54,7 +57,7 @@
 
                         this.userTotalScores.push({user: pointsData[userId].name, score: sum});
                     }
-
+                }
                     // could sort by score...
                 })
             }

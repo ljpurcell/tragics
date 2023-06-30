@@ -171,17 +171,23 @@
                 this.savePointsArray();
             },
 
-            savePointsArray() {
+            async savePointsArray() {
 
-                const pointsArray = JSON.stringify(this.pointsArrayInFocus);
+                try {
 
-                axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray}).then(response => {
+                    const pointsArray = JSON.stringify(this.pointsArrayInFocus);
+
+                    let reponse = await axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray});
 
                     if (response.statusText == 'OK') {
                         this.getUserDayData();
                         this.clearAttributesInFocus();
                     }
-                });
+                }
+                catch(error) {
+                    console.log(error);
+                }
+
             }
         }
     }
