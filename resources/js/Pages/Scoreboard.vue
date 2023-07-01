@@ -51,15 +51,28 @@
 
                         let sum = 0;
 
-                        pointsData[userId].match_days.forEach(matchday => {
+                        this.pointsData[userId].match_days.forEach(matchday => {
                             sum += matchday.total_score
                         })
 
-                        this.userTotalScores.push({user: pointsData[userId].name, score: sum});
+                        this.userTotalScores.push({user: this.pointsData[userId].name, score: sum});
+
+                        function compareScore(a, b) {
+                            let comparison = 0;
+                            if (a.score > b.score) {
+                                comparison = -1;
+                            } else if (b.score > a.score) {
+                                comparison = 1;
+                            }
+                            return comparison;
+                        }
+
+                        this.userTotalScores.sort(compareScore);
                     }
                 }
-                    // could sort by score...
-                })
+                catch (error) {
+                    console.log(error);
+                }
             }
         }
     }

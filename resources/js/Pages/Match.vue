@@ -177,7 +177,7 @@
 
                     const pointsArray = JSON.stringify(this.pointsArrayInFocus);
 
-                    let reponse = await axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray});
+                    let response = await axios.put('/api/points/' + this.userDayInFocus.id, {'points_array': pointsArray});
 
                     if (response.statusText == 'OK') {
                         this.getUserDayData();
