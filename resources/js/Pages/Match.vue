@@ -3,7 +3,7 @@
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Scoreboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Match {{matchId}}</h2>
         </template>
 
         <div class="py-12">
@@ -46,17 +46,17 @@
                             <div v-else>
                                 No scores for this day yet...
                             </div>
-                            <div class="flex justify-around">
+                            <div class="grid grid-cols-1 md:flex md:justify-around">
                                 <div class="p-2">
-                                    <label for="ruleSelection">Rule:</label>
-                                    <select id="ruleSelection" v-model="selectedRule" class="m-2 rounded-lg">
+                                    <label for="ruleSelection" class="pl-3">Rule:</label>
+                                    <select id="ruleSelection" v-model="selectedRule" class="w-full m-2 rounded-lg">
                                         <option value="" selected disabled></option>
                                         <option v-for="rule in rules" :value="rule.name">{{rule.name}}</option>
                                     </select>
                                 </div>
                                 <div class="p-2">
-                                    <label for="playerNomination">Player:</label>
-                                    <input id="playerNomination" type="text" v-model="nominatedPlayer" class="m-2 rounded-lg">
+                                    <label for="playerNomination" class="pl-3">Player:</label>
+                                    <input id="playerNomination" type="text" v-model="nominatedPlayer" class="w-full m-2 rounded-lg">
                                     <div class="flex justify-end text-xs pr-2 text-gray-500" :class="{ 'opacity-0' : !selectedRule || nominatedPlayer }">Please nominate the player as well</div>
                                 </div>
                             </div>
@@ -104,8 +104,10 @@
 
         methods: {
 
-            getUserDayData() {
-                axios.get('/api/points/' + this.matchId).then(response => {
+            async getUserDayData() {
+                try {
+
+                    let respose = await axios.get('/api/points/' + this.matchId)
                     this.userDays = response.data.data;
 
                     Object.keys(this.userDays).forEach( user => {
@@ -118,13 +120,20 @@
 
                         this.userTotalScores[user] = sum;
                     })
-                })
+                }
+                catch (error) {
+                    console.log(error);
+                }
             },
 
-            getRulesData() {
-                axios.get('/api/rules').then(response => {
+            async getRulesData() {
+                try {
+                    let response = await axios.get('/api/rules');
                     this.rules = response.data.data;
-                })
+                }
+                catch (error) {
+                    console.log(error);
+                }
             },
 
             showModalForUserDay(userDay) {
@@ -160,15 +169,23 @@
                 }
             },
 
-            removePointScore(index) {
+            async removePointScore(index) {
 
-                swal.fire({
-                    text: 'here i am'
+                let response = await swal.fire({
+                    icon: "warning",
+                    title: "Wait",
+                    text: "Are you sure you want to delete this score?",
+                    showConfirmButton: true,
+                    showDenyButton: true,
                 });
 
-                this.pointsArrayInFocus.splice(index, 1);
+                if (response.isConfirmed) {
 
-                this.savePointsArray();
+                    this.pointsArrayInFocus.splice(index, 1);
+
+                    this.savePointsArray();
+                }
+
             },
 
             async savePointsArray() {

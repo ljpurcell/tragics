@@ -4,15 +4,9 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-green-800">
-        <div>
-            <Link href="/">
-                <i class="fa-solid fa-earth-oceania text-4xl text-yellow-500"></i>
-            </Link>
-        </div>
-
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-black">
         <div
-            class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"
+            class="w-full sm:max-w-md mt-6 px-6 py-4 shadow-md overflow-hidden sm:rounded-lg" style="background: linear-gradient(45deg, green, yellow, white, red)"
         >
             <slot />
         </div>

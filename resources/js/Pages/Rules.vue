@@ -3,7 +3,7 @@
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Scoreboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Rules</h2>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -68,7 +68,7 @@
 
         },
 
-        rules() {
+        data() {
             return {
                 rules: '',
                 ruleBeingEdited: '',
@@ -84,7 +84,7 @@
             async getRules() {
 
                 try {
-                    let response = await axios.get('/rules');
+                    let response = await axios.get('/api/rules');
                     this.rules = response.data.data;
                 }
                 catch (error) {
