@@ -21,8 +21,7 @@ defineProps({
             <Link
                 v-if="$page.props.auth.user"
                 :href="route('scoreboard')"
-                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-black focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-                >Scoreboard</Link
+                class="font-semibold text-white hover:text-black">Scoreboard</Link
             >
 
             <template v-else>
