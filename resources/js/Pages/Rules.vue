@@ -32,27 +32,37 @@
                         </div>
                     </div>
                 </div>
+                <div class="flex justify-end">
+                    <button @click="showModal = true" class="bg-white mt-4 mr-4 p-4 rounded-md hover:bg-black hover:text-white">
+                            Add rule
+                    </button>
+                </div>
             </div>
             <Modal :show="showModal">
                 <div class="p-4">
-                    Editing rule...
+                    <div class="font-semibold">
+                        {{ ruleBeingEdited.id ? 'Editing' : 'Creating'}} rule...
+                    </div>
                     <div class="m-2">
                         <label for="ruleNameEdit" class="m-2">Name</label>
-                        <input id="ruleNameEdit" v-model.trim="ruleBeingEdited.name" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
+                        <input id="ruleNameEdit" v-model.trim="ruleBeingEdited.name" style="width: 90%" class="mt-2 text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black"
+                            :class="{'bg-gray-100' : !ruleBeingEdited.id}">
                     </div>
                     <div class="m-2">
                         <label for="ruleDescriptionEdit" class="m-2">Description</label>
-                        <input id="ruleDescriptionEdit" v-model.trim="ruleBeingEdited.description" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
+                        <input id="ruleDescriptionEdit" v-model.trim="ruleBeingEdited.description" style="width: 90%" class="mt-2 text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black"
+                            :class="{'bg-gray-100' : !ruleBeingEdited.id}">
                     </div>
                     <div class="m-2">
                         <label for="rulePointsEdit" class="m-2">Points</label>
-                        <input id="rulePointsEdit" v-model.number="ruleBeingEdited.points" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
+                        <input id="rulePointsEdit" v-model.number="ruleBeingEdited.points" style="width: 90%" class="mt-2 text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black"
+                            :class="{'bg-gray-100' : !ruleBeingEdited.id}">
                     </div>
-                    <div class="mx-4 mt-8 gap-y-2 grid grid-cols-1 md:flex md:justify-around">
-                        <button @click="updateRule()" class="text-lg p-4 rounded-md bg-green-500 hover:bg-green-400 text-white">
+                    <div class="mx-4 mb-2 mt-8 gap-y-2 grid grid-cols-1 md:flex md:justify-around">
+                        <button @click="updateRule()" class="text-lg p-4 rounded-md bg-green-500 hover:bg-green-400 hover:shadow-lg text-white">
                             Confirm
                         </button>
-                        <button @click="cancelEdittingRule()" class="text-lg p-4 rounded-md bg-gray-400 hover:bg-gray-500 text-white">
+                        <button @click="cancelEdittingRule()" class="text-lg p-4 rounded-md bg-gray-500 hover:bg-gray-400 hover:shadow-lg text-white">
                             Cancel
                         </button>
                     </div>
@@ -78,6 +88,7 @@
             return {
                 rules: '',
                 ruleBeingEdited: {
+                    id: '',
                     name: '',
                     description: '',
                     points: ''
@@ -102,14 +113,37 @@
                 }
             },
 
-            deleteRule(rule) {
-                swal.fire({
+            async deleteRule(rule) {
+                let userResponse = await swal.fire({
                     icon: "warning",
                     title: "Are you sure?",
                     text: "Are you sure you want to delete '" + rule.name + "' as a rule?",
                     showConfirmButton: true,
                     showDenyButton: true,
-                })
+                });
+
+                if (userResponse.isConfirmed) {
+                    try {
+                        let apiResponse = await axios.delete('/api/rules/' + rule.id);
+
+                        if (apiResponse.data.status == 'OK') {
+
+                            swal.fire({
+                                icon: "success",
+                                title: "Nice",
+                                showConfirmButton: false,
+                                showDenyButton: false,
+                                timer: 600
+                            });
+
+                            this.cancelEdittingRule();
+                            this.getRules();
+                        }
+                    }
+                    catch (error) {
+                        console.log(error);
+                    }
+                }
             },
 
             editRule(rule) {
@@ -133,7 +167,17 @@
                     });
 
                     if (userResponse.isConfirmed) {
-                        let apiResponse = await axios.put('/api/rules/' + this.ruleBeingEdited.id, this.ruleBeingEdited);
+
+                        let httpVerb = 'post';
+                        let apiEndPoint = '/api/rules';
+
+                        if (this.ruleBeingEdited.id) {
+                            httpVerb = 'put';
+                            apiEndPoint = '/api/rules/' + this.ruleBeingEdited.id;
+                        }
+
+
+                        let apiResponse = await axios[httpVerb](apiEndPoint, this.ruleBeingEdited);
 
                         if (apiResponse.data.status == 'OK') {
 
