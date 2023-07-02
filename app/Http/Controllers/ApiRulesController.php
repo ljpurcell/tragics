@@ -46,7 +46,41 @@ class ApiRulesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'string',
+                'required'
+            ],
+            'description' => [
+                'string',
+                'required'
+            ],
+            'points' => [
+                'numeric',
+                'required'
+            ]
+        ]);
+
+
+        try {
+
+            $rule = new Rule();
+
+            $rule->name = $request->get('name');
+            $rule->description = $request->get('description');
+            $rule->points = $request->get('points');
+            $rule->save();
+
+            $status = 'OK';
+            $responseCode = 200;
+            $message = 'Success';
+        } catch (\Exception $exception) {
+            $status = 'Internal server error';
+            $responseCode = 500;
+            $message = $exception->getMessage();
+        }
+
+        return response()->json(['status' => $status, 'response code' => $responseCode, 'message' => $message, 'data' => $validated]);
     }
 
     /**
