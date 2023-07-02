@@ -58,23 +58,55 @@ class ApiRulesController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * PUT /{id}
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'string',
+                'required'
+            ],
+            'description' => [
+                'string',
+                'required'
+            ],
+            'points' => [
+                'numeric',
+                'required'
+            ]
+        ]);
+
+
+        try {
+
+            $rule = Rule::find($id);
+
+            if ($rule) {
+                $rule->name = $request->get('name');
+                $rule->description = $request->get('description');
+                $rule->points = $request->get('points');
+                $rule->save();
+
+                $status = 'OK';
+                $responseCode = 200;
+                $message = 'Success';
+            } else {
+                $status = 'Not found';
+                $responseCode = 404;
+                $message = 'Could not locate the resource';
+            }
+        } catch (\Exception $exception) {
+            $status = 'Internal server error';
+            $responseCode = 500;
+            $message = $exception->getMessage();
+        }
+
+        return response()->json(['status' => $status, 'response code' => $responseCode, 'message' => $message, 'data' => $validated]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE /{id}
      */
     public function destroy(string $id)
     {

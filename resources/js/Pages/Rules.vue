@@ -38,18 +38,24 @@
                     Editing rule...
                     <div class="m-2">
                         <label for="ruleNameEdit" class="m-2">Name</label>
-                        <input id="ruleNameEdit" :value="ruleBeingEdited.name" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
+                        <input id="ruleNameEdit" v-model.trim="ruleBeingEdited.name" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
                     </div>
                     <div class="m-2">
                         <label for="ruleDescriptionEdit" class="m-2">Description</label>
-                        <input id="ruleDescriptionEdit" :value="ruleBeingEdited.description" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
+                        <input id="ruleDescriptionEdit" v-model.trim="ruleBeingEdited.description" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
                     </div>
-                <button @click="" class="text-lg p-4 rounded-md bg-green-500 hover:bg-green-400 text-white">
-                    Confirm
-                </button>
-                <button @click="showModal = false; ruleBeingEdited = '';" class="text-lg p-4 rounded-md bg-gray-400 hover:bg-gray-500 text-white">
-                    Cancel
-                </button>
+                    <div class="m-2">
+                        <label for="rulePointsEdit" class="m-2">Points</label>
+                        <input id="rulePointsEdit" v-model.number="ruleBeingEdited.points" style="width: 90%" class="text-gray-500 mx-8 p-2 rounded-lg focus:outline-none focus:text-black">
+                    </div>
+                    <div class="mx-4 mt-8 gap-y-2 grid grid-cols-1 md:flex md:justify-around">
+                        <button @click="updateRule()" class="text-lg p-4 rounded-md bg-green-500 hover:bg-green-400 text-white">
+                            Confirm
+                        </button>
+                        <button @click="cancelEdittingRule()" class="text-lg p-4 rounded-md bg-gray-400 hover:bg-gray-500 text-white">
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>
@@ -71,7 +77,11 @@
         data() {
             return {
                 rules: '',
-                ruleBeingEdited: '',
+                ruleBeingEdited: {
+                    name: '',
+                    description: '',
+                    points: ''
+                },
                 showModal: false,
             }
         },
@@ -105,6 +115,50 @@
             editRule(rule) {
                 this.ruleBeingEdited = rule;
                 this.showModal = true;
+            },
+
+            cancelEdittingRule() {
+                this.showModal = false;
+                this.ruleBeingEdited = {};
+            },
+
+            async updateRule() {
+                try {
+                    let userResponse = await swal.fire({
+                        icon: "warning",
+                        title: "Wait",
+                        text: "Are you sure you want to update this rule?",
+                        showConfirmButton: true,
+                        showDenyButton: true
+                    });
+
+                    if (userResponse.isConfirmed) {
+                        let apiResponse = await axios.put('/api/rules/' + this.ruleBeingEdited.id, this.ruleBeingEdited);
+
+                        if (apiResponse.data.status == 'OK') {
+
+                            swal.fire({
+                                icon: "success",
+                                title: "Nice",
+                                showConfirmButton: false,
+                                showDenyButton: false,
+                                timer: 600
+                            });
+
+                            this.cancelEdittingRule();
+                            this.getRules();
+                        }
+                    }
+                }
+                catch (error) {
+                    console.log(error);
+
+                    swal.fire({
+                        icon: "error",
+                        title: "Uh oh",
+                        text: error.response.data.message
+                    });
+                }
             },
         }
     }

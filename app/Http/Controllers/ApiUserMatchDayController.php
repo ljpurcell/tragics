@@ -104,7 +104,7 @@ class ApiUserMatchDayController extends Controller
                     $rule = Rule::where('name', $pointScore->rule)->firstOrFail();
 
                     if ($rule) {
-                        $totalScore += $rule->points;
+                        $totalScore += $pointScore->points;
                     }
                 }
 

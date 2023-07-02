@@ -36,7 +36,7 @@
                             <div v-if="pointsArrayInFocus.length">
                                 {{ userDayInFocus.user.name }} has already scored points on this day for:
                                 <ul v-for="(score, index) in pointsArrayInFocus" class="m-4">
-                                    <li><span class="font-semibold">{{score.rule}}</span> - <span class="capitalize">{{score.player}}</span>
+                                    <li><span class="font-semibold">{{score.rule}}</span> - <span class="capitalize">{{score.player}}</span> ({{score.points}} pts)
                                         <button @click="removePointScore(index)" class="text-red-300 text-xs hover:text-red-400 p-1 mx-2">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
@@ -51,7 +51,7 @@
                                     <label for="ruleSelection" class="pl-3">Rule:</label>
                                     <select id="ruleSelection" v-model="selectedRule" class="w-full m-2 rounded-lg">
                                         <option value="" selected disabled></option>
-                                        <option v-for="rule in rules" :value="rule.name">{{rule.name}}</option>
+                                        <option v-for="rule in rules" :value="rule">{{rule.name}}</option>
                                     </select>
                                 </div>
                                 <div class="p-2">
@@ -107,7 +107,7 @@
             async getUserDayData() {
                 try {
 
-                    let respose = await axios.get('/api/points/' + this.matchId)
+                    let response = await axios.get('/api/points/' + this.matchId)
                     this.userDays = response.data.data;
 
                     Object.keys(this.userDays).forEach( user => {
@@ -163,7 +163,7 @@
 
                 if (this.selectedRule && this.nominatedPlayer) {
 
-                    this.pointsArrayInFocus.push({'rule': this.selectedRule, 'player': this.nominatedPlayer});
+                    this.pointsArrayInFocus.push({'rule': this.selectedRule.name, 'player': this.nominatedPlayer, 'points': this.selectedRule.points});
 
                     this.savePointsArray();
                 }
