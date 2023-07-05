@@ -9,7 +9,6 @@ Supercoach for cricket, but with worse rules and an entirely broken point-system
 - Laravel
 - MySQL
 ### Frontend: 
-- Vue.JS components
-- Astro.JS for performance
+- Vue.JS
 - TailwindCSS
 
