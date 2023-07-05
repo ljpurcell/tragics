@@ -12,7 +12,7 @@
 
                     <div v-for="userScore in userTotalScores" class="border-b border-gray-100 border-1 flex w-full justify-between text-lg py-6 px-8">
                         <div>{{userScore.user}}</div>
-                        <div>{{userScore.score}}</div>
+                        <div>{{ Number.isInteger(userScore.score) ? userScore.score : userScore.score.toFixed(1) }}</div>
                     </div>
                 </div>
             </div>

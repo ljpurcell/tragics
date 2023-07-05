@@ -11,11 +11,11 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div v-for="user in Object.keys(userDays)" class="border-b border-gray-100 border-1 w-full text-lg py-6 px-8">
                         <div>
-                            {{user}} - Total: {{ userTotalScores[user] }}
+                            {{user}} - Total: {{Number.isInteger( userTotalScores[user] ) ?  userTotalScores[user]  : Number( userTotalScores[user] ).toFixed(1)}}
                         </div>
                         <div class="flex w-full justify-between">
                             <div v-for="userDay in userDays[user]" class="">
-                                <input type="text" size="2" :value="userDay.total_score" disabled="true" class="rounded-lg bg-gray-100">
+                                <input type="text" size="2" :value="Number.isInteger(userDay.total_score) ? userDay.total_score : Number(userDay.total_score).toFixed(1)" disabled="true" class="rounded-lg bg-gray-100">
                                 <button @click="showModalForUserDay(userDay)" class="text-gray-300 hover:bg-black hover:text-white px-2 py-1 rounded-lg text-sm ml-2">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
@@ -36,7 +36,7 @@
                             <div v-if="pointsArrayInFocus.length">
                                 {{ userDayInFocus.user.name }} has already scored points on this day for:
                                 <ul v-for="(score, index) in pointsArrayInFocus" class="m-4">
-                                    <li><span class="font-semibold">{{score.rule}}</span> - <span class="capitalize">{{score.player}}</span> ({{score.points}} pts)
+                                    <li><span class="font-semibold">{{score.rule}}</span> - <span class="capitalize">{{score.player}}</span> ({{Number.isInteger(score.points) ? score.points : Number(score.points).toFixed(1)}} pts)
                                         <button @click="removePointScore(index)" class="text-red-300 text-xs hover:text-red-400 p-1 mx-2">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
